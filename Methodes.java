@@ -34,6 +34,11 @@ import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
 public class Methodes {
+	
+	static String p70 ="ref70.jpg";
+	static String p90 ="ref90.jpg";
+	static String p110 ="ref110.jpg";
+	static String p30 ="ref30.jpg";
 
 	public static Mat LectureImage(String fichier){					//methode pour lire une image dans m
 		File f = new File(fichier);
@@ -301,7 +306,7 @@ public class Methodes {
 		System.out.println("Avec le panneau 70 : "+m70 );
 		System.out.println("Avec le panneau 90 : "+m90 );
 		System.out.println("Avec le panneau 110 : "+m110 );		
-		//System.out.println("Avec le panneau double : "+mdouble );
+		System.out.println("Avec le panneau double : "+mdouble );
 
 	}
 
@@ -329,14 +334,16 @@ public class Methodes {
 				Core.rectangle(m, new Point(rect.x,rect.y),
 						new Point(rect.x+rect.y+rect.height,rect.y+rect.height),
 						new Scalar(0,255,0),2);
-				Mat tmp = m.submat(rect.y,rect.y+rect.height,rect.x,rect.x+rect.width/2);
+				Mat tmp = m.submat(rect.y,rect.y+rect.height,rect.x,rect.x+rect.width);
 				Mat ball = Mat.zeros(tmp.size(), tmp.type());
 				tmp.copyTo(ball);
 				//ImShow("ball", ball);
+				
+				
+				// Permet de redimensionner l'image
 
-
-				Mat tmp_base = ball3.submat(0,ball3.height(),0,ball3.width()/2);
-				tmp_base.copyTo(ball3);
+				//Mat tmp_base = ball3.submat(0,ball3.height(),0,ball3.width()/2);
+				//tmp_base.copyTo(ball3);
 
 				//System.out.println(ball3.width());
 				//Mise à l'échelle
@@ -389,7 +396,7 @@ public class Methodes {
 
 				Mat matchedImage = new Mat(sroadSign.rows(), sroadSign.cols()*2, sroadSign.type());
 				Features2d.drawMatches(sObject, objectKeypoints, sroadSign, signKeypoints, matchs, matchedImage);
-				//ImShow("Matching", matchedImage);
+				ImShow("Matching", matchedImage);
 
 			}
 
@@ -401,19 +408,29 @@ public class Methodes {
 	}
 
 
-	public static void Super_matching(Mat m) {
-		String p70 ="ref70.jpg";
-		String p90 ="ref90.jpg";
-		String p110 ="ref110.jpg";
-		String p30 ="ref30.jpg";
-		//String pdouble ="refdouble.jpg";
+	public static int Super_matching(Mat m) {
+		
+		int res =-1;
+		//On réalise des copies car le programme matching modifie m et fausse les résultats pour les matchings suivants
+		
+		Mat tmp1 = new Mat();
+		Mat tmp2 = new Mat();
+		Mat tmp3 = new Mat();
+		Mat tmp4 = new Mat();
+		Mat tmp5 = new Mat();
+
+		m.copyTo(tmp1);
+		m.copyTo(tmp2);
+		m.copyTo(tmp3);
+		m.copyTo(tmp4);
+		m.copyTo(tmp5);
 
 		double [] scores=new double [4];
 		int indexmax=-1;
-		scores[0] = matching(m,p70);
-		scores[1] = matching(m,p70);
-		scores[2] = matching(m,p90);
-		scores[3] = matching(m,p110);
+		scores[0] = matching(tmp1,p30);
+		scores[1] = matching(tmp2,p70);
+		scores[2] = matching(tmp3,p90);
+		scores[3] = matching(tmp4,p110);
 
 		
 		double scoremax=0;
@@ -426,11 +443,30 @@ public class Methodes {
 		}	
 		
 		if (indexmax !=-1) {
-			System.out.println(scores[0]);
-			System.out.println(scores[1]);
-			System.out.println(scores[2]);
-			System.out.println(scores[3]);
+			
+			if (indexmax==0) {
+				res=30;
+				return res;
+			}
+			if (indexmax==1) {
+				res=70;
+				return res;
+			}
+			if (indexmax==2) {
+				res=90;
+				return res;
+			}
+			else  {
+				res=110;
+				return res;
+			}
+			
 		}
+		else {
+			return res;
+		}
+
+
 
 		//System.out.println(indexmax);
 	}
