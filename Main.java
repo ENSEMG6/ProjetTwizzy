@@ -20,7 +20,11 @@ public class Main {
 		
 		Video.lancer_video();
 		
-		Mat m = Methodes.LectureImage("route.jpg");
+		Mat m = Methodes.LectureImage("ref110.jpg");
+		
+		double a = Methodes.Nb_noir(m);
+		
+		System.out.println(a);
 		
 		//System.out.println(m.size());
 		//System.out.println(m())

@@ -25,6 +25,7 @@ public class Video {
 	public static void lancer_video() {
 
 		// ouvre la fenetre
+		
 		JFrame jframe = new JFrame("Detection de panneaux sur un flux vidéo");
 		jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		JLabel vidpanel = new JLabel();
@@ -37,7 +38,7 @@ public class Video {
 		//Mat PanneauAAnalyser = null;
 
 
-		//on range toutes les vitesses dans un liste
+		//on range toutes les vitesses dans une liste
 		ArrayList<Integer> vitesse = new ArrayList();
 
 		//ce tableau contient les vitesses connues dans la base de données
@@ -48,8 +49,8 @@ public class Video {
 		// tant qu'il y a une image à lire on rentre dans la bouble
 		while (camera.read(frame)) {
 
-
-			//on ajoute la vitesse de l'image dans notre liste d'image
+			//camera.read(frame);
+			//on ajoute la vitesse de l'image dans notre liste de vitesse
 			vitesse.add(Methodes.Super_matching(frame));
 
 			
@@ -67,12 +68,13 @@ public class Video {
 			
 			
 			
-			//on détermine le panneau détecté
+			// on détermine le panneau détecté
 			int vitesse_pre=0;
 			int [] vi = new int [5];
 			int nb_moins=0;
 			int comp=0;
 			double vimax=0.5;
+			
 			//on compte les occurence de panneau détecté
 			vi[0]=0;
 			vi[1]=0;
@@ -109,8 +111,10 @@ public class Video {
 
 				}
 
-
+				vitesse.clear(); // on vide la liste pour ne pas compter plusieurs fois les mêmes panneaux
 			}
+			
+			
 
 			for(int j=0;j<vi.length;j++){
 				if (vi[j]>vimax){

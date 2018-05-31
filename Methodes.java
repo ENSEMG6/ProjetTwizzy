@@ -37,10 +37,12 @@ import org.opencv.imgproc.Imgproc;
 
 public class Methodes {
 
+	static String p30 ="ref30.jpg";
+	static String p50 ="ref50.jpg";
 	static String p70 ="ref70.jpg";
 	static String p90 ="ref90.jpg";
 	static String p110 ="ref110.jpg";
-	static String p30 ="ref30.jpg";
+
 
 	public static Mat LectureImage(String fichier){					//methode pour lire une image dans m
 		File f = new File(fichier);
@@ -109,6 +111,14 @@ public class Methodes {
 		}
 		return m;
 	}
+
+
+	/* ici tout est inutile pour le programme mais utile pour la compréhension
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
 
 	public static void Exo1(){
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
@@ -243,7 +253,7 @@ public class Methodes {
 				Imgproc.cvtColor(sroadSign, graySign, Imgproc.COLOR_BGRA2GRAY);
 				Core.normalize(graySign, graySign, 0,255,Core.NORM_MINMAX);
 
-				/*Extraction des caractéristiques*/
+				//*Extraction des caractéristiques
 				FeatureDetector orbDetector = FeatureDetector.create(FeatureDetector.FAST);
 				DescriptorExtractor orbExtractor = DescriptorExtractor.create(DescriptorExtractor.BRIEF);
 
@@ -259,7 +269,7 @@ public class Methodes {
 				Mat signDescriptor = new Mat(sroadSign.rows(), sroadSign.cols(), sroadSign.type());
 				orbExtractor.compute(graySign, signKeypoints, signDescriptor);
 
-				/*Matching*/
+				//*Matching
 				MatOfDMatch matchs = new MatOfDMatch();
 				DescriptorMatcher matcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE);
 				matcher.match(objectDescriptor,  signDescriptor, matchs);
@@ -312,7 +322,7 @@ public class Methodes {
 
 	}
 
-
+	 */
 	public static double cut_resize (Mat m, String panneau) { // ce programme met le panneau enventuellement détecté à léchelle avec le panneau de la base de donnée
 
 		double res=-0.5;
@@ -325,14 +335,14 @@ public class Methodes {
 		MatOfPoint2f matOfPoint2f = new MatOfPoint2f();
 		float[] radius = new float[1];
 		Point center = new Point();
-		
+
 		for (int c = 0; c < contours.size(); c++) {
 			MatOfPoint contour = contours.get(c);
 			double contourArea = Imgproc.contourArea(contour);
 			matOfPoint2f.fromList(contour.toList());
 			Imgproc.minEnclosingCircle(matOfPoint2f, center, radius);
 			if((contourArea/(Math.PI*radius[0]*radius[0]))>=0.8){
-				
+
 				Core.circle(m, center, (int)radius[0], new Scalar(0255,0),2);
 				Rect rect = Imgproc.boundingRect(contour);
 				Core.rectangle(m, new Point(rect.x,rect.y),
@@ -341,14 +351,14 @@ public class Methodes {
 				Mat tmp = m.submat(rect.y,rect.y+rect.height,rect.x,rect.x+rect.width);
 				Mat ball = Mat.zeros(tmp.size(), tmp.type());
 				tmp.copyTo(ball);
-				//ImShow("ball", ball);
+				//ImShow("ball", ball); // affiche le panneau détecter
 
 				// Permet de redimensionner l'image
 
 				Mat tmp_base = ball3.submat(0,ball3.height(),0,ball3.width());
 				tmp_base.copyTo(ball3);
 
-				ImShow("ball1", ball3);
+				//ImShow("ball1", ball3); //affiche la base de donnée
 
 				//System.out.println(ball3.width());
 				//Mise à l'échelle
@@ -356,14 +366,14 @@ public class Methodes {
 				Mat object = ball;
 				Mat sObject = new Mat();
 				Imgproc.resize(object, sObject, sroadSign.size());
-				
-				
 
-				ImShow("panneau détecté", sObject);
+
+
+				//ImShow("panneau détecté", sObject);
 				//ImShow("panneau de la base de donnée",ball3);
-				res = compare_image(sObject,ball3);
-				
-				
+				res = compare_imageRGB(sObject,ball3);
+
+
 
 			}
 
@@ -371,26 +381,74 @@ public class Methodes {
 		return res;
 	}
 
-
-
-	public static double compare_image (Mat m , Mat pa) { // ce programme détermine le taux de simulitute entre deux images
-		
-		
-		
+	public static double compare_imageRGB (Mat m , Mat pa) {
+		// ce programme détermine le taux de simulitute entre deux images
 		double var=0;
+		for (int i = 0; i < pa.height(); i++) { 
+			for (int j = 0; j < m.width(); j++) {
+				double[] BGR1 = m.get(i,j);
+				double[] BGR2 = pa.get(i,j);	//recupere les valeurs RGB
+				var = var + Math.abs(BGR1[0] - BGR2[0]) + Math.abs(BGR1[1] - BGR2[1]) + Math.abs(BGR1[2] - BGR2[2]);
+			}
+		}
+		//System.out.println(var);
+		return -1*var;
 		
-		
+	}
+	
+	public static double Nb_noir (Mat pa) {
+		double nbnoir = 0;
+		for (int i = 0; i < pa.height(); i++) { 
+			for (int j = 0; j < pa.width(); j++) {
+			if((pa.get(i,j)[0]+pa.get(i,j)[1]+pa.get(i,j)[2])/3<255*0.1) {
+			nbnoir++; 
+		}
+			}
+		}
+			return nbnoir;
+	}
+
+
+	public static double compare_imageNB (Mat m , Mat pa) { // ce programme détermine le taux de simulitute entre deux images
+
+
+
+		double var=0;
+		double vm;
+		double vpa;
+
+
 		for (int i = 0; i < pa.height(); i++) { 
 			for (int j = 0; j < m.width(); j++) {
 				double[] BGR1 = m.get(i,j);
 				double[] BGR2 = pa.get(i,j);	//recupere les valeurs RGB
 
-				var = var + Math.abs(BGR1[0] - BGR2[0]) + Math.abs(BGR1[1] - BGR2[1]) + Math.abs(BGR1[2] - BGR2[2]);
+				vm=(BGR1[0]+BGR1[1]+BGR1[2])/3;
+				vpa=(BGR2[0]+BGR2[1]+BGR2[2])/3;
 
+				if (vm<255*0.1) {
+					vm=0;
+				}
+				if (vm>=255*0.1) {
+					vm=1;
+				}
+
+				if (vpa<255*0.1) {
+					vpa=0;
+				}
+				if (vpa>=255*0.1) {
+					vpa=1;
+				}
+
+				if (vpa==vm) {
+					var++;
+				}
+
+				
 
 			}
 		}
-
+		System.out.println(var);
 		return var;
 	}
 
@@ -401,7 +459,7 @@ public class Methodes {
 	public static int Super_matching(Mat m) {
 
 		int res =-1;
-		
+
 		//On réalise des copies car le programme matching modifie m et fausse les résultats pour les matchings suivants
 
 		Mat tmp1 = new Mat();
@@ -415,18 +473,21 @@ public class Methodes {
 		m.copyTo(tmp3);
 		m.copyTo(tmp4);
 		m.copyTo(tmp5);
-		
-		
-		// on enregistre chacun taux de similitude dans un tableau score
-		double [] scores=new double [4];
-		
-		scores[0] = (cut_resize(tmp1,p30));
-		scores[1] = (cut_resize(tmp2,p70));
-		scores[2] = (cut_resize(tmp3,p90));
-		scores[3] = (cut_resize(tmp4,p110));
 
-		//on recherche quel est le panneau avec le plus fort taux
-		double scoremax=0;
+
+		// on enregistre chacun taux de similitude dans un tableau score
+		double [] scores=new double [5];
+
+		scores[0] = (cut_resize(tmp1,p30));
+		scores[1] = (cut_resize(tmp2,p50));
+		scores[2] = (cut_resize(tmp3,p70));
+		scores[3] = (cut_resize(tmp4,p90));
+		scores[4] = (cut_resize(tmp5,p110));
+
+
+		//on recherche quel est le panneau avec le plus fort taux 
+		double scoremax=scores[0]; //RGB
+		//double scoremax=0;
 		int indexmax=-1;
 		for(int j=0;j<scores.length;j++){
 			if (scores[j]>scoremax){
@@ -434,36 +495,37 @@ public class Methodes {
 				indexmax=j;
 			}
 		}
-		
+
 		//on en déduit la panneau qui a été détecté
-		
+		//System.out.println(indexmax);
+
 		if (indexmax !=-1) {
 
 			if (indexmax==0) {
 				res=30;
-				return res;
+
 			}
 			if (indexmax==1) {
-				res=70;
-				return res;
+				res=50;
+
 			}
 			if (indexmax==2) {
+				res=70;
+			}
+			if (indexmax==3) {
 				res=90;
-				return res;
+
 			}
-			else  {
+			if (indexmax==4)
 				res=110;
-				return res;
-			}
 
 		}
-		else {
-			return res;
-		}
 
 
 
-	
+		return res;
+
+
 	}
 
 }
