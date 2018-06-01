@@ -18,13 +18,12 @@ public class Main {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		//Methodes.Super_Matching("route4.jpg");
 		
-		Video.lancer_video();
-		
+		Video.lancer_video("video1.avi");
 		Mat m = Methodes.LectureImage("ref110.jpg");
 		
 		double a = Methodes.Nb_noir(m);
 		
-		System.out.println(a);
+		//System.out.println(a);
 		
 		//System.out.println(m.size());
 		//System.out.println(m())
