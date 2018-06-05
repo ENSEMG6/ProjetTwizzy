@@ -1,37 +1,32 @@
-import java.util.Arrays;
-import java.util.Vector;
+ 
+import java.awt.EventQueue;
 
 import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.Scalar;
-import org.opencv.core.Size;
-import org.opencv.imgproc.Imgproc;
+
+
 
 public class Main {
+	
+	static {
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+    }
 
+    static Mat imag = null;
+    
 
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		//System.out.println(Methodes.Matching("ref70.jpg","ref70.jpg"));
-		
-		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		//Methodes.Super_Matching("route4.jpg");
-		
-		Video.lancer_video();
-		
-		Mat m = Methodes.LectureImage("ref110.jpg");
-		
-		double a = Methodes.Nb_noir(m);
-		
-		System.out.println(a);
-		
-		//System.out.println(m.size());
-		//System.out.println(m())
-		//System.out.println(Methodes.cut_resize(m,"ref30.jpg"));
-		
-
-
+	public static void main(String[] args) {  
+		// lancement de la Fenetre
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Fenetre frame = new Fenetre();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+        }
+        
 	}
-
-}

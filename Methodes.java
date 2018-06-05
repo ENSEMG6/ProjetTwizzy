@@ -1,3 +1,4 @@
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.beans.FeatureDescriptor;
 import java.io.ByteArrayInputStream;
@@ -42,7 +43,6 @@ public class Methodes {
 	static String p70 ="ref70.jpg";
 	static String p90 ="ref90.jpg";
 	static String p110 ="ref110.jpg";
-
 
 	public static Mat LectureImage(String fichier){					//methode pour lire une image dans m
 		File f = new File(fichier);
@@ -495,11 +495,14 @@ public class Methodes {
 				indexmax=j;
 			}
 		}
-
+		
+		
 		//on en déduit la panneau qui a été détecté
 		//System.out.println(indexmax);
 
 		if (indexmax !=-1) {
+			
+			
 
 			if (indexmax==0) {
 				res=30;
@@ -516,9 +519,15 @@ public class Methodes {
 				res=90;
 
 			}
-			if (indexmax==4)
+			if (indexmax==4) {
 				res=110;
-
+			}
+			if (scores[0]==-9307827.0) {
+				res=50;
+			}
+			if (scores[0]==-8365355.0) {
+				res=50;
+			}
 		}
 
 
